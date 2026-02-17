@@ -1,16 +1,20 @@
 const express = require("express");
 const morgan = require("morgan");
-
+const products = require("./data/products");
 const app = express(); //create server
 
 app.use(morgan("dev"));
+app.use(express.json()); // parsea json a objeto
 
 app.get("/products", (req, res) => {
-  res.send("all products");
+  res.json(products);
 });
 
 app.post("/products", (req, res) => {
-  res.send("create products");
+  console.log("request body:", req.body);
+  const newProduct = { ...req.body, id: products.length + 1 };
+  products.push(newProduct);
+  res.send(newProduct);
 });
 
 app.put("/products", (req, res) => {
