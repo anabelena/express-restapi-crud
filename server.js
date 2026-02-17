@@ -1,10 +1,11 @@
 const express = require("express");
 const morgan = require("morgan");
-const products = require("./data/products");
-const app = express(); //create server
+let products = require("./data/products");
+
+const app = express();
 
 app.use(morgan("dev"));
-app.use(express.json()); // parsea json a objeto
+app.use(express.json());
 
 // GET ALL PRODUCTS
 app.get("/products", (req, res) => {
@@ -19,12 +20,31 @@ app.post("/products", (req, res) => {
   res.send(newProduct);
 });
 
-app.put("/products", (req, res) => {
-  res.send("update products");
+// UPDATE A PRODUCT
+app.put("/products/:id", (req, res) => {
+  const newData = req.body; // {price:,name:}
+  const id = Number(req.params.id);
+  const productFound = products.find((item) => item.id === id);
+  if (!productFound) {
+    return res.status(404).json({ message: "Product not found" });
+  }
+
+  products = products.map((p) => (p.id === id ? { ...p, ...newData } : p));
+
+  res.json({
+    message: "Product updated succesfully",
+  });
 });
 
-app.delete("/products", (req, res) => {
-  res.send("delete products");
+// DELETE A PRODUCT
+app.delete("/products/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const productFound = products.find((item) => item.id === id);
+  if (!productFound) {
+    return res.status(404).json({ message: "Product not found" });
+  }
+  products = products.filter((p) => p.id !== id);
+  res.sendStatus(200);
 });
 
 // GET ONE PRODUCT
