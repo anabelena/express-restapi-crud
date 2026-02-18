@@ -1,12 +1,19 @@
 const express = require("express");
 const morgan = require("morgan");
+require("dotenv").config();
+const port = process.env.PORT;
 let products = require("./data/products");
 
 const app = express();
 
+// MIDDLEWARES
 app.use(morgan("dev"));
-app.use(express.json());
+app.use(express.json()); //convert request JSON to JS Object
 
+// CONFIG
+app.set("appName", "Express");
+
+// ROUTES
 // GET ALL PRODUCTS
 app.get("/products", (req, res) => {
   res.json(products);
@@ -17,7 +24,7 @@ app.post("/products", (req, res) => {
   console.log("request body:", req.body);
   const newProduct = { ...req.body, id: products.length + 1 };
   products.push(newProduct);
-  res.send(newProduct);
+  res.status(201).json(newProduct);
 });
 
 // UPDATE A PRODUCT
@@ -57,5 +64,6 @@ app.get("/products/:id", (req, res) => {
   res.json(productFound);
 });
 
-app.listen(3000);
-console.log(`server on port ${3000}`);
+app.listen(port, () => {
+  console.log(`Server ${app.get("appName")} on port ${port}`);
+});
