@@ -1,5 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
+require("dotenv").config();
+const port = process.env.PORT;
 let products = require("./data/products");
 
 const app = express();
@@ -57,5 +59,6 @@ app.get("/products/:id", (req, res) => {
   res.json(productFound);
 });
 
-app.listen(3000);
-console.log(`server on port ${3000}`);
+app.listen(port, () => {
+  console.log(`Server on port ${port}`);
+});
